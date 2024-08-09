@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 
 class AuthController {
@@ -13,10 +14,10 @@ class AuthController {
       const saltRounds = 11
       req.body.password = await bcrypt.hash(req.body.password, saltRounds)
       await User.create(req.body)
-      res.send('User created successfully!')
+      res.json({ msg: 'User created successfully!' })
     }
     catch(err) {
-      res.status(500).send(err)
+      res.status(500).json({ err })
     }
   }
 
@@ -28,18 +29,19 @@ class AuthController {
       if (user) {
         const isValidPw = await bcrypt.compare(password, user.password)
         if (isValidPw) {
-          res.send('User signed in successfully!')
+          const token = jwt.sign({ uid: user._id }, process.env.JWT_KEY, { expiresIn: '1h' })
+          res.json({ msg: 'User signed in successfully!', token })
         }
         else {
-          res.send('Incorrect password!')
+          res.status(401).json({ msg: 'Incorrect password!' })
         }
       }
       else {
-        res.send('User does not exist!')
+        res.status(500).json({ msg: 'User does not exist!' })
       }
     }
     catch(err) {
-      res.status(500).send(err)
+      res.status(500).json({ err })
     }
   }
 }

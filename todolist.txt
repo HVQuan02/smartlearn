@@ -1,0 +1,10 @@
+client-side:
+pw length 11
+show pw
+paste in
+5 attempts
+pw strength real time, prompt-based suggestions, init suggestions
+mfa: sms otp, fido2 webauthn, face/fingerprint
+verify if you are human
+light/dark theme
+client side cache for faster previsited site
